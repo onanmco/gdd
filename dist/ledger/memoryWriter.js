@@ -1,0 +1,147 @@
+import { appendFile, readFile, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { stringify as stringifyYaml } from "yaml";
+import { z } from "zod";
+import { validatePlanFile } from "../validators/planValidator.js";
+import { validateMemoryFiles } from "../validators/memoryValidator.js";
+import { actorSchema, evidenceSchema, ledgerEventSchema } from "../schemas/memory.js";
+import { taskIdString } from "../schemas/common.js";
+import { hashMemoryEntry } from "./hash.js";
+import { sha256 } from "../utils/hash.js";
+const memoryDraftSchema = actorSchema.extend({
+    task_id: taskIdString.or(z.literal("plan")),
+    event: ledgerEventSchema,
+    summary: z.string().trim().min(1),
+    evidence: evidenceSchema,
+    next_action: z.string().trim().min(1)
+});
+export async function initMemoryFile(planPath, memoryPath) {
+    const plan = await validatePlanFile(planPath);
+    const planMarkdown = await readFile(planPath, "utf8");
+    const target = memoryPath ?? join(dirname(planPath), "memory.md");
+    const createdAt = utcNow();
+    const entryWithoutEntryHash = {
+        id: "ENTRY-000001",
+        timestamp: createdAt,
+        task_id: "plan",
+        event: "memory_created",
+        actor: {
+            harness: "other",
+            agent: "guard"
+        },
+        previous_hash: "genesis",
+        summary: "Created GDD append-only memory ledger.",
+        evidence: {
+            commands: [],
+            files_changed: []
+        },
+        next_action: "Start the first planned task."
+    };
+    const entry = {
+        ...entryWithoutEntryHash,
+        entry_hash: hashMemoryEntry(entryWithoutEntryHash)
+    };
+    const markdown = [
+        "---",
+        stringifyYaml({
+            gdd_schema: "memory.v1",
+            artifact: "memory",
+            plan_name: plan.frontmatter.plan_name,
+            plan_slug: plan.frontmatter.plan_slug,
+            created_at: createdAt,
+            plan_hash: sha256(planMarkdown),
+            append_only: true,
+            hash_chain: "sha256"
+        }).trimEnd(),
+        "---",
+        "",
+        `# GDD Memory: ${plan.frontmatter.plan_name}`,
+        "",
+        "## Ledger",
+        "",
+        "### ENTRY-000001",
+        "",
+        "```yaml",
+        stringifyYaml({ entry }).trimEnd(),
+        "```",
+        ""
+    ].join("\n");
+    await writeFile(target, markdown, { flag: "wx" });
+    return target;
+}
+export async function appendMemoryEntry(planPath, memoryPath, draft) {
+    const result = memoryDraftSchema.safeParse(draft);
+    if (!result.success) {
+        throw new Error(result.error.issues.map((issue) => issue.message).join("\n"));
+    }
+    const memory = await validateMemoryFiles(planPath, memoryPath);
+    const previous = memory.entries.at(-1);
+    if (!previous) {
+        throw new Error("Cannot append to empty memory ledger.");
+    }
+    assertTddTransition(memory.entries, result.data.task_id, result.data.event);
+    const nextNumber = memory.entries.length + 1;
+    const entryWithoutEntryHash = {
+        id: `ENTRY-${String(nextNumber).padStart(6, "0")}`,
+        timestamp: utcNow(),
+        task_id: result.data.task_id,
+        event: result.data.event,
+        actor: {
+            harness: result.data.harness,
+            agent: result.data.agent
+        },
+        previous_hash: previous.entry_hash,
+        summary: result.data.summary,
+        evidence: result.data.evidence,
+        next_action: result.data.next_action
+    };
+    const entry = {
+        ...entryWithoutEntryHash,
+        entry_hash: hashMemoryEntry(entryWithoutEntryHash)
+    };
+    const block = [
+        "",
+        `### ${entry.id}`,
+        "",
+        "```yaml",
+        stringifyYaml({ entry }).trimEnd(),
+        "```",
+        ""
+    ].join("\n");
+    await appendFile(memoryPath, block);
+    return entry;
+}
+export function getCompletedTaskIds(entries) {
+    return new Set(entries
+        .filter((entry) => entry.task_id !== "plan" && entry.event === "task_completed")
+        .map((entry) => entry.task_id));
+}
+export function hasTaskEvent(entries, taskId, event) {
+    return entries.some((entry) => entry.task_id === taskId && entry.event === event);
+}
+function assertTddTransition(entries, taskId, event) {
+    if (taskId === "plan") {
+        return;
+    }
+    const requires = {
+        red_recorded: "task_started",
+        green_recorded: "red_recorded",
+        refactor_recorded: "green_recorded",
+        acceptance_verified: "refactor_recorded",
+        task_completed: "acceptance_verified"
+    };
+    const requiredEvent = requires[event];
+    if (requiredEvent && !hasTaskEvent(entries, taskId, requiredEvent)) {
+        throw new Error(`${taskId} cannot append ${event} before ${requiredEvent}.`);
+    }
+    if (event === "task_started" && hasTaskEvent(entries, taskId, "task_started")) {
+        throw new Error(`${taskId} already has task_started.`);
+    }
+    if (event === "task_completed" && hasTaskEvent(entries, taskId, "task_completed")) {
+        throw new Error(`${taskId} is already completed.`);
+    }
+}
+function utcNow() {
+    return new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+//# sourceMappingURL=memoryWriter.js.map

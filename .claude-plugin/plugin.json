@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "gdd",
+  "version": "0.1.0",
+  "description": "Goal Driven Development: interactive planning, immutable task contracts, append-only memory, and TDD-enforced implementation.",
+  "author": {
+    "name": "GDD Contributors"
+  },
+  "homepage": "https://github.com/gdd-dev/gdd",
+  "repository": "https://github.com/gdd-dev/gdd",
+  "license": "MIT",
+  "keywords": [
+    "goal-driven-development",
+    "tdd",
+    "agent-skills",
+    "planning",
+    "memory"
+  ],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "hooks": "./hooks/hooks.json"
+}

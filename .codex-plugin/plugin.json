@@ -1,0 +1,44 @@
+{
+  "name": "gdd",
+  "version": "0.1.0",
+  "description": "Goal Driven Development plugin for plan-first, TDD-enforced AI coding workflows.",
+  "author": {
+    "name": "GDD Contributors",
+    "email": "maintainers@example.com",
+    "url": "https://github.com/gdd-dev"
+  },
+  "homepage": "https://github.com/gdd-dev/gdd",
+  "repository": "https://github.com/gdd-dev/gdd",
+  "license": "MIT",
+  "keywords": [
+    "goal-driven-development",
+    "tdd",
+    "codex",
+    "claude-code",
+    "opencode"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "GDD",
+    "shortDescription": "Plan-first, TDD-enforced AI development.",
+    "longDescription": "GDD turns a simple idea into an immutable task plan with user-confirmed acceptance criteria and testing methods, then implements tasks through TDD with append-only memory.",
+    "developerName": "GDD Contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write",
+      "Code",
+      "Automation"
+    ],
+    "websiteURL": "https://github.com/gdd-dev/gdd",
+    "privacyPolicyURL": "https://github.com/gdd-dev/gdd",
+    "termsOfServiceURL": "https://github.com/gdd-dev/gdd",
+    "defaultPrompt": [
+      "Use gdd:plan for this idea.",
+      "Use gdd:implement for my locked plan.",
+      "Use gdd:continue gdd/plans/my-plan/plan.md."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

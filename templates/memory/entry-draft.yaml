@@ -1,0 +1,13 @@
+task_id: TASK-001
+event: red_recorded
+harness: codex
+agent: subagent
+summary: Added failing validator test before implementation.
+evidence:
+  commands:
+    - command: npm test -- plan-validator.test.ts
+      exit_code: 1
+      output_excerpt: Expected schema error was not thrown.
+  files_changed:
+    - tests/validators/plan-validator.test.ts
+next_action: Implement the minimum validator logic required to pass the planned test.

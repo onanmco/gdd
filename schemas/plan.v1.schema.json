@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gdd.dev/schemas/plan.v1.schema.json",
+  "title": "GDD Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["frontmatter", "tasks"],
+  "properties": {
+    "frontmatter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gdd_schema",
+        "artifact",
+        "plan_name",
+        "plan_slug",
+        "created_at",
+        "status",
+        "lock_manifest",
+        "tdd_policy",
+        "testing_exception_policy",
+        "diagrams"
+      ],
+      "properties": {
+        "gdd_schema": {
+          "type": "string",
+          "const": "plan.v1",
+          "examples": ["plan.v1"]
+        },
+        "artifact": {
+          "type": "string",
+          "const": "plan",
+          "examples": ["plan"]
+        },
+        "plan_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact plan name explicitly provided by the user.",
+          "examples": ["Stripe Billing Refactor"]
+        },
+        "plan_slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "examples": ["stripe-billing-refactor"]
+        },
+        "created_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "examples": ["2026-05-13T18:12:00Z"]
+        },
+        "status": {
+          "type": "string",
+          "const": "locked",
+          "examples": ["locked"]
+        },
+        "lock_manifest": {
+          "type": "string",
+          "const": "manifest.json",
+          "examples": ["manifest.json"]
+        },
+        "tdd_policy": {
+          "type": "string",
+          "const": "automated_tests_required",
+          "examples": ["automated_tests_required"]
+        },
+        "testing_exception_policy": {
+          "type": "string",
+          "const": "user_approved_per_task_only",
+          "examples": ["user_approved_per_task_only"]
+        },
+        "diagrams": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["flowchart", "sequence"],
+          "properties": {
+            "flowchart": {
+              "type": "string",
+              "pattern": "^diagrams/.+\\.mmd$",
+              "examples": ["diagrams/flowchart.mmd"]
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^diagrams/.+\\.mmd$",
+              "examples": ["diagrams/sequence.mmd"]
+            }
+          }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/taskBlock"
+      }
+    }
+  },
+  "$defs": {
+    "taskBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task"],
+      "properties": {
+        "task": {
+          "$ref": "#/$defs/task"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "status",
+        "dependencies",
+        "description",
+        "requirements",
+        "acceptance_criteria",
+        "testing",
+        "allowed_scope",
+        "user_confirmed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^TASK-\\d{3}$",
+          "examples": ["TASK-001"]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "examples": ["Add locked plan validator"]
+        },
+        "status": {
+          "type": "string",
+          "const": "planned",
+          "examples": ["planned"]
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^TASK-\\d{3}$"
+          },
+          "examples": [["TASK-001"]]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["Validate plan.md before implementation starts."]
+        },
+        "requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/requirement"
+          }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/acceptanceCriterion"
+          }
+        },
+        "testing": {
+          "$ref": "#/$defs/testing"
+        },
+        "allowed_scope": {
+          "$ref": "#/$defs/allowedScope"
+        },
+        "user_confirmed": {
+          "$ref": "#/$defs/userConfirmed"
+        }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^REQ-\\d{3}$",
+          "examples": ["REQ-001"]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["Reject plans when a task lacks acceptance criteria."]
+        }
+      }
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "verified_by"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^AC-\\d{3}$",
+          "examples": ["AC-001"]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["Invalid plans fail before implementation starts."]
+        },
+        "verified_by": {
+          "type": "string",
+          "pattern": "^TEST-\\d{3}$",
+          "description": "Must reference a test id in the same task.",
+          "examples": ["TEST-001"]
+        }
+      }
+    },
+    "testing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "exception_reason", "tests"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["automated", "exception"],
+          "examples": ["automated"]
+        },
+        "exception_reason": {
+          "type": ["string", "null"],
+          "description": "Null for automated tests; non-empty user-approved reason for exception mode.",
+          "examples": [null, "User explicitly approved no automated test for this docs-only task."]
+        },
+        "tests": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/testMethod"
+          }
+        }
+      }
+    },
+    "testMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "command",
+        "files",
+        "expected_red",
+        "expected_green",
+        "refactor_verification"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^TEST-\\d{3}$",
+          "examples": ["TEST-001"]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "unit",
+            "integration",
+            "e2e",
+            "visual",
+            "contract",
+            "smoke",
+            "migration",
+            "lint",
+            "manual_exception"
+          ],
+          "examples": ["unit"]
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["npm test -- plan-validator.test.ts"]
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "not": {
+              "pattern": "^/|\\.\\."
+            }
+          },
+          "examples": [["tests/validators/plan-validator.test.ts"]]
+        },
+        "expected_red": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["The validator currently accepts an invalid fixture."]
+        },
+        "expected_green": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["The validator rejects the invalid fixture with a schema error."]
+        },
+        "refactor_verification": {
+          "type": "string",
+          "minLength": 1,
+          "examples": ["npm test -- plan-validator.test.ts"]
+        }
+      }
+    },
+    "allowedScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files", "forbidden"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "not": {
+              "pattern": "^/|\\.\\."
+            }
+          },
+          "examples": [["src/validators/**", "tests/validators/**"]]
+        },
+        "forbidden": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "not": {
+              "pattern": "^/|\\.\\."
+            }
+          },
+          "examples": [["gdd/plans/*/plan.md"]]
+        }
+      }
+    },
+    "userConfirmed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acceptance_criteria", "testing_method"],
+      "properties": {
+        "acceptance_criteria": {
+          "type": "boolean",
+          "const": true,
+          "examples": [true]
+        },
+        "testing_method": {
+          "type": "boolean",
+          "const": true,
+          "examples": [true]
+        }
+      }
+    }
+  }
+}

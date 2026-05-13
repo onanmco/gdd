@@ -1,0 +1,57 @@
+{
+  "name": "gdd",
+  "version": "0.1.0",
+  "description": "Goal Driven Development plugin for plan-first, TDD-enforced AI coding workflows.",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "GDD Contributors"
+  },
+  "keywords": [
+    "ai",
+    "codex",
+    "claude-code",
+    "opencode",
+    "tdd",
+    "agent-skills",
+    "goal-driven-development"
+  ],
+  "files": [
+    ".claude-plugin/",
+    ".codex-plugin/",
+    ".opencode/",
+    "adapters/",
+    "agents/",
+    "dist/",
+    "docs/",
+    "hooks/",
+    "schemas/",
+    "scripts/",
+    "skills/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "install:opencode": "node scripts/install-opencode-adapter.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "validate": "npm run typecheck && npm run test",
+    "internal": "node dist/internal.js"
+  },
+  "dependencies": {
+    "yaml": "^2.8.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
