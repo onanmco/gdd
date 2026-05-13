@@ -31,6 +31,7 @@ export const ledgerEventSchema = z.enum([
   "task_completed",
   "blocker_recorded",
   "retry_recorded",
+  "implementer_spawned",
   "reviewer_spawned",
   "debugger_spawned"
 ]);
@@ -81,6 +82,17 @@ export const memoryEntrySchema = z
         code: "custom",
         path: ["entry", "evidence", "commands"],
         message: "commands evidence is required except for memory_created"
+      });
+    }
+
+    if (
+      entry.event === "red_recorded" &&
+      !entry.evidence.commands.some((command) => command.exit_code !== 0)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["entry", "evidence", "commands"],
+        message: "red_recorded requires at least one failing command"
       });
     }
   });

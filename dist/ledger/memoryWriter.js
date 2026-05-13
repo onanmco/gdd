@@ -4,7 +4,7 @@ import { stringify as stringifyYaml } from "yaml";
 import { z } from "zod";
 import { validatePlanFile } from "../validators/planValidator.js";
 import { validateMemoryFiles } from "../validators/memoryValidator.js";
-import { actorSchema, evidenceSchema, ledgerEventSchema } from "../schemas/memory.js";
+import { actorSchema, evidenceSchema, ledgerEventSchema, memoryEntrySchema } from "../schemas/memory.js";
 import { taskIdString } from "../schemas/common.js";
 import { hashMemoryEntry } from "./hash.js";
 import { sha256 } from "../utils/hash.js";
@@ -99,6 +99,10 @@ export async function appendMemoryEntry(planPath, memoryPath, draft) {
         ...entryWithoutEntryHash,
         entry_hash: hashMemoryEntry(entryWithoutEntryHash)
     };
+    const entryResult = memoryEntrySchema.safeParse({ entry });
+    if (!entryResult.success) {
+        throw new Error(entryResult.error.issues.map((issue) => issue.message).join("\n"));
+    }
     const block = [
         "",
         `### ${entry.id}`,
@@ -136,6 +140,12 @@ function assertTddTransition(entries, taskId, event) {
     }
     if (event === "task_started" && hasTaskEvent(entries, taskId, "task_started")) {
         throw new Error(`${taskId} already has task_started.`);
+    }
+    if (event === "implementer_spawned" && hasTaskEvent(entries, taskId, "task_started")) {
+        throw new Error(`${taskId} cannot append implementer_spawned after task_started.`);
+    }
+    if (event === "implementer_spawned" && hasTaskEvent(entries, taskId, "implementer_spawned")) {
+        throw new Error(`${taskId} already has implementer_spawned.`);
     }
     if (event === "task_completed" && hasTaskEvent(entries, taskId, "task_completed")) {
         throw new Error(`${taskId} is already completed.`);

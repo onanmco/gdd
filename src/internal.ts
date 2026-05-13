@@ -1,11 +1,15 @@
 import { readFile } from "node:fs/promises";
 import { parse as parseYaml } from "yaml";
 import { appendMemoryEntry, initMemoryFile } from "./ledger/memoryWriter.js";
-import { writeLockManifest } from "./manifest/manifest.js";
+import { validateLockManifest, writeLockManifest } from "./manifest/manifest.js";
 import { guardHarnessEvent, readJsonFromStdin, readYamlFromStdin } from "./guards/hookGuard.js";
 import { validateMemoryFiles } from "./validators/memoryValidator.js";
 import { validatePlanFile } from "./validators/planValidator.js";
-import { startVisualCompanion } from "./visual/server.js";
+import {
+  prepareDiagramCompanion,
+  prepareVisualCompanion,
+  startVisualCompanion
+} from "./visual/server.js";
 
 async function main(): Promise<void> {
   const [command, ...args] = process.argv.slice(2);
@@ -15,6 +19,13 @@ async function main(): Promise<void> {
       const planPath = requiredArg(args, 0, "plan path");
       const plan = await validatePlanFile(planPath);
       console.log(`valid plan: ${plan.frontmatter.plan_name} (${plan.tasks.length} tasks)`);
+      return;
+    }
+
+    case "validate-lock": {
+      const planPath = requiredArg(args, 0, "plan path");
+      const manifest = await validateLockManifest(planPath);
+      console.log(`valid lock: ${manifest.plan_name} (${manifest.files.length} files)`);
       return;
     }
 
@@ -84,15 +95,27 @@ async function main(): Promise<void> {
 
     case "visual-server": {
       const visualDir = requiredArg(args, 0, "visual directory");
-      const port = Number(args[1] ?? "4377");
+      const port = args[1] ? Number(args[1]) : undefined;
       await startVisualCompanion(visualDir, port);
+      return;
+    }
+
+    case "prepare-visual": {
+      const planDir = requiredArg(args, 0, "plan directory");
+      await prepareVisualCompanion(planDir);
+      return;
+    }
+
+    case "prepare-diagrams": {
+      const planDir = requiredArg(args, 0, "plan directory");
+      await prepareDiagramCompanion(planDir);
       return;
     }
 
     default:
       throw new Error(
         `Unknown internal command '${command ?? ""}'. ` +
-          "Expected validate-plan, validate-memory, init-memory, append-memory, write-manifest, guard-hook, visual-server, or check-append-only."
+          "Expected validate-plan, validate-lock, validate-memory, init-memory, append-memory, write-manifest, guard-hook, prepare-visual, prepare-diagrams, visual-server, or check-append-only."
       );
   }
 }

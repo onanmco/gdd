@@ -10,10 +10,12 @@ const targetProject = process.argv[2]
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const runtimeRoot = resolve(targetProject, "gdd-runtime");
 const commandsRoot = resolve(targetProject, "commands");
+const agentsRoot = resolve(targetProject, "agents");
 const internalEntry = resolve(runtimeRoot, "dist/internal.js");
 
 await mkdir(targetProject, { recursive: true });
 await cp(resolve(repoRoot, ".opencode/commands"), commandsRoot, { recursive: true });
+await installOpenCodeAgents();
 await mkdir(resolve(targetProject, "plugins"), { recursive: true });
 await rm(runtimeRoot, { recursive: true, force: true });
 await mkdir(runtimeRoot, { recursive: true });
@@ -24,6 +26,7 @@ await cp(resolve(repoRoot, "templates"), resolve(runtimeRoot, "templates"), { re
 await writeRuntimePackageJson();
 
 await rewriteInstalledMarkdown(commandsRoot);
+await rewriteInstalledMarkdown(agentsRoot, (name) => name.startsWith("gdd-"));
 await rewriteInstalledMarkdown(resolve(runtimeRoot, "skills"));
 
 const installResult = spawnSync(npmCommand(), [
@@ -81,19 +84,37 @@ Never rely on chat history for task status; replay memory.md and continue from t
 
 console.log(`Installed GDD OpenCode adapter into ${targetProject}`);
 console.log(`Installed GDD OpenCode runtime into ${runtimeRoot}`);
+console.log(`Installed GDD OpenCode agents into ${agentsRoot}`);
 console.log("Restart OpenCode and run /gdd:plan, /gdd:implement, or /gdd:continue.");
 
-async function rewriteInstalledMarkdown(root) {
+async function installOpenCodeAgents() {
+  await mkdir(agentsRoot, { recursive: true });
+  const entries = await readdir(resolve(repoRoot, "agents"), { withFileTypes: true });
+
+  await Promise.all(
+    entries.map(async (entry) => {
+      if (!entry.isFile() || !entry.name.startsWith("gdd-") || !entry.name.endsWith(".md")) {
+        return;
+      }
+
+      await cp(resolve(repoRoot, "agents", entry.name), resolve(agentsRoot, entry.name), {
+        force: true
+      });
+    })
+  );
+}
+
+async function rewriteInstalledMarkdown(root, shouldRewriteFile = () => true) {
   const entries = await readdir(root, { withFileTypes: true });
 
   await Promise.all(
     entries.map(async (entry) => {
       const path = resolve(root, entry.name);
       if (entry.isDirectory()) {
-        await rewriteInstalledMarkdown(path);
+        await rewriteInstalledMarkdown(path, shouldRewriteFile);
         return;
       }
-      if (!entry.isFile() || !entry.name.endsWith(".md")) {
+      if (!entry.isFile() || !entry.name.endsWith(".md") || !shouldRewriteFile(entry.name)) {
         return;
       }
 

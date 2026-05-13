@@ -19,6 +19,7 @@ export declare const ledgerEventSchema: z.ZodEnum<{
     task_completed: "task_completed";
     blocker_recorded: "blocker_recorded";
     retry_recorded: "retry_recorded";
+    implementer_spawned: "implementer_spawned";
     reviewer_spawned: "reviewer_spawned";
     debugger_spawned: "debugger_spawned";
 }>;
@@ -65,6 +66,7 @@ export declare const memoryEntrySchema: z.ZodObject<{
             task_completed: "task_completed";
             blocker_recorded: "blocker_recorded";
             retry_recorded: "retry_recorded";
+            implementer_spawned: "implementer_spawned";
             reviewer_spawned: "reviewer_spawned";
             debugger_spawned: "debugger_spawned";
         }>;

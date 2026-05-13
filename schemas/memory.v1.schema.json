@@ -124,6 +124,7 @@
             "task_completed",
             "blocker_recorded",
             "retry_recorded",
+            "implementer_spawned",
             "reviewer_spawned",
             "debugger_spawned"
           ],

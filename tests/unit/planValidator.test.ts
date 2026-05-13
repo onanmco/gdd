@@ -23,6 +23,28 @@ describe("plan validator", () => {
       validatePlanMarkdown(validPlanMarkdown().replace("type: unit", "type: manual_exception"))
     ).toThrow(/manual_exception/);
   });
+
+  it("rejects plans without comparable-domain research", () => {
+    expect(() =>
+      validatePlanMarkdown(
+        validPlanMarkdown().replace(
+          "### Comparable Project/Product Research",
+          "### Similar Tooling Research"
+        )
+      )
+    ).toThrow(/Comparable Project\/Product Research/);
+  });
+
+  it("rejects tests whose files cannot be created by the task or dependencies", () => {
+    expect(() =>
+      validatePlanMarkdown(
+        validPlanMarkdown().replace(
+          "          - tests/validators/plan-validator.test.ts",
+          "          - tests/e2e/plan-validator.test.ts"
+        )
+      )
+    ).toThrow(/not writable by the task or its dependencies/);
+  });
 });
 
 export function validPlanMarkdown(): string {
@@ -49,7 +71,13 @@ Validate GDD plans.
 
 ## Research Summary
 
-Local schema validation is required.
+### Comparable Project/Product Research
+
+- Comparable validator workflows separate human-readable Markdown from machine-checked schemas and fail fast before implementation.
+
+### Tooling Research
+
+- Local TypeScript schema validation is required.
 
 ## Tech Stack
 

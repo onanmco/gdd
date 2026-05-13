@@ -11,25 +11,29 @@ This skill turns a user idea into a locked GDD plan under `gdd/plans/{plan_slug}
 
 - Always ask the user for the plan name. Never infer it.
 - Planning is interactive. Ask until the goal, constraints, current state, stack, risks, task list, acceptance criteria, and testing method are all clear.
-- Research similar projects or prior art on the web when network access exists. If research fails, discuss the limitation with the user before continuing.
+- Research comparable projects, products, workflows, libraries, or repos in the same problem domain when network access exists. Tooling research is supplemental and cannot satisfy this requirement by itself. If comparable-domain research fails, discuss the limitation with the user before continuing.
 - Decide the tech stack with the user. Do not silently choose stack, framework, test runner, or verification method.
 - If UI work is involved, offer a plan-local visual companion under `gdd/plans/{plan_slug}/visual/`.
-- Always produce Mermaid flowchart and sequence diagrams, save them under `gdd/plans/{plan_slug}/diagrams/`, and confirm them with the user before writing `plan.md`.
+- Always produce Mermaid flowchart and sequence diagrams, save them under `gdd/plans/{plan_slug}/diagrams/`, run `prepare-diagrams`, and confirm the browser-ready diagram view with the user before writing `plan.md`.
 - Before writing `plan.md`, confirm every task contract with the user. A task contract is invalid unless acceptance criteria and exact testing method are user-confirmed.
 - Automated tests are mandatory for every task unless the user explicitly approves a testing exception for that task during planning.
 - Once `plan.md` is written and `manifest.json` is created, the plan, diagrams, and manifest are immutable.
+- Guard errors are hard failures. Do not treat guard errors as warnings and do not bypass them with shell writes.
 
 ## Required Flow
 
 1. Ask for the explicit plan name.
 2. Inspect the target project without mutating files.
 3. Interview the user about goal, audience, constraints, non-goals, current state, risks, stack, deployment, and testing expectations.
-4. Research comparable tools and patterns. Record useful findings in `## Research Summary`.
-5. For UI work, ask whether to create a visual companion. If accepted, create non-functional mockups in `visual/` and use them to clarify requirements.
+4. Research comparable-domain projects and tooling separately. Record both under `## Research Summary` using:
+   - `### Comparable Project/Product Research` for similar end-user products, workflows, apps, libraries, or repos in the same problem domain;
+   - `### Tooling Research` for test runners, browser automation, frameworks, APIs, or implementation tools.
+   Each plan must include at least one concrete planning insight from comparable-domain research.
+5. For UI work, ask whether to create a visual companion. If accepted, create non-functional mockups in `visual/`, run `prepare-visual`, give the user the printed `file://` URL, and use it to clarify requirements. Do not ask the user to serve files manually.
 6. Draft Mermaid diagrams:
    - `diagrams/flowchart.mmd`
    - `diagrams/sequence.mmd`
-7. Confirm diagrams with the user.
+7. Run `prepare-diagrams`, give the user the printed `file://` URL, and confirm the rendered diagrams with the user.
 8. Draft atomic task contracts. For each task, explicitly confirm:
    - requirements array;
    - acceptance criteria array;
@@ -45,6 +49,7 @@ This skill turns a user idea into a locked GDD plan under `gdd/plans/{plan_slug}
 ```bash
 node <plugin-root>/dist/internal.js validate-plan gdd/plans/<plan_slug>/plan.md
 node <plugin-root>/dist/internal.js write-manifest gdd/plans/<plan_slug>/plan.md
+node <plugin-root>/dist/internal.js validate-lock gdd/plans/<plan_slug>/plan.md
 ```
 
 If validation fails, fix the draft with more user clarification before locking.

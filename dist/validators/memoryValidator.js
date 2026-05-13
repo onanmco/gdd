@@ -55,6 +55,7 @@ export function validateMemoryMarkdown(markdown, plan, planHash, path = "<memory
     });
     assertHashChain(entries);
     assertTaskCompletionOrder(entries);
+    assertImplementerSpawnOrder(entries);
     return {
         path,
         frontmatter,
@@ -95,6 +96,28 @@ function assertTaskCompletionOrder(entries) {
                 }
                 previousPosition = eventPosition;
             }
+        }
+    }
+}
+function assertImplementerSpawnOrder(entries) {
+    const positions = new Map();
+    for (let index = 0; index < entries.length; index += 1) {
+        const entry = entries[index];
+        if (entry.task_id === "plan") {
+            continue;
+        }
+        if (!positions.has(entry.task_id)) {
+            positions.set(entry.task_id, new Map());
+        }
+        positions.get(entry.task_id)?.set(entry.event, index);
+    }
+    for (const [taskId, taskPositions] of positions.entries()) {
+        const implementerPosition = taskPositions.get("implementer_spawned");
+        const taskStartedPosition = taskPositions.get("task_started");
+        if (implementerPosition !== undefined &&
+            taskStartedPosition !== undefined &&
+            implementerPosition > taskStartedPosition) {
+            throw new Error(`${taskId} implementer_spawned must be recorded before task_started.`);
         }
     }
 }

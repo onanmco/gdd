@@ -19,6 +19,15 @@ Required heading order:
 ## Tasks
 ```
 
+`## Research Summary` must contain:
+
+```md
+### Comparable Project/Product Research
+### Tooling Research
+```
+
+Comparable research must describe similar projects, products, workflows, libraries, or repos in the same problem domain. Tooling research is separate and cannot satisfy the comparable research requirement by itself.
+
 Plan-level fields:
 
 | Field | Type | Required | Allowed values | Example |
@@ -73,7 +82,8 @@ Cross-field rules enforced by the TypeScript validator:
 - every acceptance criterion references an existing test;
 - automated mode cannot use `manual_exception` or `N/A`;
 - exception mode requires a non-empty user-approved reason and `manual_exception` test entries;
-- dependencies must reference existing tasks and cannot self-reference.
+- dependencies must reference existing tasks and cannot self-reference;
+- each test file must be writable by the task itself or by one of its dependencies.
 
 ## `memory.md`
 
@@ -131,6 +141,7 @@ Allowed ledger events:
 - task_completed
 - blocker_recorded
 - retry_recorded
+- implementer_spawned
 - reviewer_spawned
 - debugger_spawned
 ```
@@ -142,3 +153,5 @@ task_started -> red_recorded -> green_recorded -> refactor_recorded -> acceptanc
 ```
 
 The validator rejects completion if any required event is missing or out of order.
+
+When a harness supports subagents, `implementer_spawned` records delegation to `gdd-implementer` before task work starts. If present for a task, it must appear before `task_started`.

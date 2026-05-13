@@ -66,7 +66,8 @@ npm exec --yes --package github:onanmco/gdd gdd-install -- opencode
 The installer copies:
 
 - commands to `~/.config/opencode/commands/`;
-- hook plugin files to `~/.config/opencode/plugins/`.
+- GDD subagents to `~/.config/opencode/agents/`;
+- hook plugin files to `~/.config/opencode/plugins/`;
 - runtime files and dependencies to `~/.config/opencode/gdd-runtime/`.
 
 Restart OpenCode, then use:
@@ -91,12 +92,15 @@ The OpenCode plugin calls:
 node dist/internal.js guard-hook opencode
 ```
 
+OpenCode `gdd:implement` and `gdd:continue` run as `gdd-orchestrator`, which delegates atomic task work to the installed `gdd-implementer` subagent.
+
 ## Other Harnesses
 
 Use `skills/` as the canonical workflow source and invoke these internal commands around phase transitions:
 
 ```bash
 node dist/internal.js validate-plan <plan.md>
+node dist/internal.js validate-lock <plan.md>
 node dist/internal.js init-memory <plan.md>
 node dist/internal.js validate-memory <plan.md> <memory.md>
 node dist/internal.js append-memory <plan.md> <memory.md> < entry.yaml
