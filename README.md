@@ -31,26 +31,18 @@ Then restart Claude Code and run `/gdd:plan`.
 Codex:
 
 ```bash
-git clone https://github.com/OWNER/gdd.git
-cd gdd
-npm install
-npm run build
-npm run install:codex
+codex plugin marketplace add OWNER/gdd
 ```
 
-Then restart Codex, install/enable `gdd` from the Local marketplace, and run `$gdd:plan`.
+Then restart Codex and run `$gdd:plan`. Codex clones/caches the marketplace internally, so you do not need to keep a local checkout.
 
 OpenCode:
 
 ```bash
-git clone https://github.com/OWNER/gdd.git
-cd gdd
-npm install
-npm run build
-npm run install:opencode
+npm exec --yes --package github:OWNER/gdd gdd-install -- opencode
 ```
 
-Then restart OpenCode and run `/gdd:plan`.
+Then restart OpenCode and run `/gdd:plan`. The installer copies the commands and runtime into `~/.config/opencode`, so no local repository is required.
 
 For details, see [docs/installation.md](docs/installation.md).
 

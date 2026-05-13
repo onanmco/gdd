@@ -35,24 +35,13 @@ The hook commands use `${CLAUDE_PLUGIN_ROOT}` and expect `dist/internal.js` to e
 
 ## Codex
 
-Codex does not currently have the same public marketplace install flow as Claude Code. Install from GitHub by cloning the repo, then registering it in the local Codex plugin marketplace:
+Codex installs plugin marketplaces directly from GitHub. This repo includes `.agents/plugins/marketplace.json`, so users do not need to keep a local clone.
 
 ```bash
-git clone https://github.com/OWNER/gdd.git
-cd gdd
-npm install
-npm run build
-npm run validate
-npm run install:codex
+codex plugin marketplace add OWNER/gdd
 ```
 
-The installer:
-
-- symlinks the repo to `~/plugins/gdd`;
-- creates or updates `~/.agents/plugins/marketplace.json`;
-- adds `gdd` as a local plugin entry.
-
-Restart Codex, install/enable `gdd` from the Local marketplace, then use:
+Restart Codex, then use:
 
 ```text
 $gdd:plan
@@ -60,29 +49,27 @@ $gdd:implement gdd/plans/<plan-slug>/plan.md
 $gdd:continue gdd/plans/<plan-slug>/plan.md
 ```
 
-The Codex adapter uses the same `skills/` directory and internal validators. If the installed Codex version supports plugin hooks, point them at:
+To update later:
 
 ```bash
-node dist/internal.js guard-hook codex
+codex plugin marketplace upgrade gdd
 ```
+
+The Codex adapter uses the same `skills/` directory and internal validators.
 
 ## OpenCode
 
-Install globally from GitHub:
+Install globally from GitHub without keeping a local clone:
 
 ```bash
-git clone https://github.com/OWNER/gdd.git
-cd gdd
-npm install
-npm run build
-npm run validate
-npm run install:opencode
+npm exec --yes --package github:OWNER/gdd gdd-install -- opencode
 ```
 
 The installer copies:
 
 - commands to `~/.config/opencode/commands/`;
 - hook plugin files to `~/.config/opencode/plugins/`.
+- runtime files and dependencies to `~/.config/opencode/gdd-runtime/`.
 
 Restart OpenCode, then use:
 

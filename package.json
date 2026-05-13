@@ -20,6 +20,7 @@
   "files": [
     ".claude-plugin/",
     ".codex-plugin/",
+    ".agents/",
     ".opencode/",
     "adapters/",
     "agents/",
@@ -35,12 +36,14 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "install:codex": "node scripts/install-codex-plugin.mjs",
     "install:opencode": "node scripts/install-opencode-adapter.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "validate": "npm run typecheck && npm run test",
     "internal": "node dist/internal.js"
+  },
+  "bin": {
+    "gdd-install": "./scripts/gdd-install.mjs"
   },
   "dependencies": {
     "yaml": "^2.8.2",
