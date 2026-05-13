@@ -15,6 +15,45 @@ Use the native invocation style of your harness:
 - OpenCode: `/gdd:plan`, `/gdd:implement`, `/gdd:continue`, plus `/gdd-plan` aliases
 - Codex: `$gdd:plan`, `$gdd:implement`, `$gdd:continue` when installed as a Codex plugin
 
+## Install From GitHub
+
+Replace `OWNER/gdd` with the GitHub repository you are installing from.
+
+Claude Code:
+
+```text
+/plugin marketplace add OWNER/gdd
+/plugin install gdd@gdd
+```
+
+Then restart Claude Code and run `/gdd:plan`.
+
+Codex:
+
+```bash
+git clone https://github.com/OWNER/gdd.git
+cd gdd
+npm install
+npm run build
+npm run install:codex
+```
+
+Then restart Codex, install/enable `gdd` from the Local marketplace, and run `$gdd:plan`.
+
+OpenCode:
+
+```bash
+git clone https://github.com/OWNER/gdd.git
+cd gdd
+npm install
+npm run build
+npm run install:opencode
+```
+
+Then restart OpenCode and run `/gdd:plan`.
+
+For details, see [docs/installation.md](docs/installation.md).
+
 ## What GDD Enforces
 
 - The plan name is always asked from the user.

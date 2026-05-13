@@ -1,0 +1,27 @@
+{
+  "name": "gdd",
+  "owner": {
+    "name": "GDD Contributors"
+  },
+  "description": "Goal Driven Development plugins.",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "gdd",
+      "source": "./",
+      "description": "Plan-first, TDD-enforced AI development with immutable plans and append-only memory.",
+      "version": "0.1.0",
+      "author": {
+        "name": "GDD Contributors"
+      },
+      "license": "MIT",
+      "category": "productivity",
+      "tags": [
+        "tdd",
+        "planning",
+        "agent-skills",
+        "memory"
+      ]
+    }
+  ]
+}
