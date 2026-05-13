@@ -4,11 +4,11 @@
   "description": "Goal Driven Development plugin for plan-first, TDD-enforced AI coding workflows.",
   "author": {
     "name": "GDD Contributors",
-    "email": "maintainers@example.com",
-    "url": "https://github.com/gdd-dev"
+    "email": "onanmco.noreply.github.com",
+    "url": "https://github.com/onanmco"
   },
-  "homepage": "https://github.com/gdd-dev/gdd",
-  "repository": "https://github.com/gdd-dev/gdd",
+  "homepage": "https://github.com/onanmco/gdd",
+  "repository": "https://github.com/onanmco/gdd",
   "license": "MIT",
   "keywords": [
     "goal-driven-development",
@@ -31,9 +31,9 @@
       "Code",
       "Automation"
     ],
-    "websiteURL": "https://github.com/gdd-dev/gdd",
-    "privacyPolicyURL": "https://github.com/gdd-dev/gdd",
-    "termsOfServiceURL": "https://github.com/gdd-dev/gdd",
+    "websiteURL": "https://github.com/onanmco/gdd",
+    "privacyPolicyURL": "https://github.com/onanmco/gdd",
+    "termsOfServiceURL": "https://github.com/onanmco/gdd",
     "defaultPrompt": [
       "Use gdd:plan for this idea.",
       "Use gdd:implement for my locked plan.",

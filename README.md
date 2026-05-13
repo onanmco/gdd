@@ -17,12 +17,10 @@ Use the native invocation style of your harness:
 
 ## Install From GitHub
 
-Replace `OWNER/gdd` with the GitHub repository you are installing from.
-
 Claude Code:
 
 ```text
-/plugin marketplace add OWNER/gdd
+/plugin marketplace add onanmco/gdd
 /plugin install gdd@gdd
 ```
 
@@ -31,7 +29,7 @@ Then restart Claude Code and run `/gdd:plan`.
 Codex:
 
 ```bash
-codex plugin marketplace add OWNER/gdd
+codex plugin marketplace add onanmco/gdd
 ```
 
 Then restart Codex and run `$gdd:plan`. Codex clones/caches the marketplace internally, so you do not need to keep a local checkout.
@@ -39,7 +37,7 @@ Then restart Codex and run `$gdd:plan`. Codex clones/caches the marketplace inte
 OpenCode:
 
 ```bash
-npm exec --yes --package github:OWNER/gdd gdd-install -- opencode
+npm exec --yes --package github:onanmco/gdd gdd-install -- opencode
 ```
 
 Then restart OpenCode and run `/gdd:plan`. The installer copies the commands and runtime into `~/.config/opencode`, so no local repository is required.

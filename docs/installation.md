@@ -1,7 +1,5 @@
 # Installation From GitHub
 
-Replace `OWNER/gdd` with the real GitHub repository path.
-
 GDD includes built `dist/` files in releases, but building locally is still recommended after cloning.
 
 ## Claude Code
@@ -11,7 +9,7 @@ Claude Code installs plugins through marketplaces. This repo includes `.claude-p
 Inside Claude Code:
 
 ```text
-/plugin marketplace add OWNER/gdd
+/plugin marketplace add onanmco/gdd
 /plugin install gdd@gdd
 ```
 
@@ -38,7 +36,7 @@ The hook commands use `${CLAUDE_PLUGIN_ROOT}` and expect `dist/internal.js` to e
 Codex installs plugin marketplaces directly from GitHub. This repo includes `.agents/plugins/marketplace.json`, so users do not need to keep a local clone.
 
 ```bash
-codex plugin marketplace add OWNER/gdd
+codex plugin marketplace add onanmco/gdd
 ```
 
 Restart Codex, then use:
@@ -62,7 +60,7 @@ The Codex adapter uses the same `skills/` directory and internal validators.
 Install globally from GitHub without keeping a local clone:
 
 ```bash
-npm exec --yes --package github:OWNER/gdd gdd-install -- opencode
+npm exec --yes --package github:onanmco/gdd gdd-install -- opencode
 ```
 
 The installer copies:
