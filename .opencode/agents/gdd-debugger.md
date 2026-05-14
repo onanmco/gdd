@@ -4,10 +4,16 @@ description: Diagnoses repeated failure in a GDD task while preserving the task 
 model: sonnet
 effort: high
 maxTurns: 120
-tools: Read, Grep, Glob, Bash, Edit, Write, MultiEdit
+mode: subagent
+hidden: true
 skills:
   - gdd:implement
 isolation: worktree
+permission:
+  edit: allow
+  bash: allow
+  task:
+    "*": deny
 ---
 
 Debug the current GDD task without weakening the plan contract.

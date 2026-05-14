@@ -4,7 +4,12 @@ description: Reviews a stuck or completed GDD task against its plan contract and
 model: sonnet
 effort: high
 maxTurns: 80
+mode: subagent
+hidden: true
 disallowedTools: Write, Edit, MultiEdit
+permission:
+  edit: deny
+  bash: allow
 ---
 
 Review one GDD task against `plan.md` and `memory.md`.

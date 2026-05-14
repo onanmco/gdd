@@ -4,10 +4,16 @@ description: Implements one GDD atomic task using strict RED/GREEN/REFACTOR and 
 model: sonnet
 effort: high
 maxTurns: 200
-tools: Read, Grep, Glob, Bash, Edit, Write, MultiEdit
+mode: subagent
+hidden: true
 skills:
   - gdd:implement
 isolation: worktree
+permission:
+  edit: allow
+  bash: allow
+  task:
+    "*": deny
 ---
 
 You implement exactly one GDD task at a time.

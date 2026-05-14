@@ -89,7 +89,7 @@ console.log("Restart OpenCode and run /gdd:plan, /gdd:implement, or /gdd:continu
 
 async function installOpenCodeAgents() {
   await mkdir(agentsRoot, { recursive: true });
-  const entries = await readdir(resolve(repoRoot, "agents"), { withFileTypes: true });
+  const entries = await readdir(resolve(repoRoot, ".opencode/agents"), { withFileTypes: true });
 
   await Promise.all(
     entries.map(async (entry) => {
@@ -97,7 +97,7 @@ async function installOpenCodeAgents() {
         return;
       }
 
-      await cp(resolve(repoRoot, "agents", entry.name), resolve(agentsRoot, entry.name), {
+      await cp(resolve(repoRoot, ".opencode/agents", entry.name), resolve(agentsRoot, entry.name), {
         force: true
       });
     })

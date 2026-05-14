@@ -10,7 +10,8 @@ GDD is deliberately skill-based. The user does not run a standalone `gdd` CLI. H
 - `src/ledger/`: hash-chain memory creation and append-only entry generation.
 - `src/guards/`: hook guard for locked artifacts, allowed scope, and pre-RED edits.
 - `src/visual/`: plan-local visual companion server.
-- `agents/`: cross-harness agent definitions for implementation orchestration, task implementation, review, and debugging.
+- `agents/`: Claude-compatible agent definitions for implementation orchestration, task implementation, review, and debugging.
+- `.opencode/agents/`: OpenCode-specific copies with primary/subagent mode and permission frontmatter.
 - `.opencode/commands/`: OpenCode slash commands and aliases.
 - `.opencode/plugins/`: OpenCode TypeScript hook plugin.
 - `.claude-plugin/` and `.codex-plugin/`: plugin manifests.

@@ -4,7 +4,15 @@ description: Orchestrates locked GDD implementation and delegates each atomic ta
 model: sonnet
 effort: high
 maxTurns: 120
-tools: Agent(gdd-implementer, gdd-reviewer, gdd-debugger), Read, Grep, Glob, Bash
+mode: primary
+permission:
+  edit: deny
+  bash: allow
+  task:
+    "*": deny
+    gdd-implementer: allow
+    gdd-reviewer: allow
+    gdd-debugger: allow
 ---
 
 You orchestrate a locked GDD implementation run. Validate `plan.md`, validate the lock manifest, initialize or validate `memory.md`, replay the ledger, and delegate exactly one incomplete task at a time to `gdd-implementer`.
